@@ -13,8 +13,22 @@ sudo apt install python python-pip
 sudo pip install pillow luma.core luma.oled psutil
 ```
 
-Autostart
+## Hardware
+The Display is connected to the default I2C port on the [Raspberry Pi Header](https://www.raspberrypi-spy.co.uk/2012/06/simple-guide-to-the-rpi-gpio-header-and-pins/)
+```
+VCC -> Pin 1
+GND -> Pin 6
+SDA -> Pin 3
+SCL -> Pin 5
+```
+It's also possible to use an spi based OLED. Take a look in the main script and modify the marked line.
 
+## Installation
+Use ```sudo chmod +x watchOLED_change.py``` to make the script executable
+and ```sudo ./watchOLED_change.py``` to run the script
+
+
+## Autostart
 If you want to enable autostart, open the .service file and change
 ```/PATH/TO/SCRIPTDIRECTORY``` to your actual working directory 
 
