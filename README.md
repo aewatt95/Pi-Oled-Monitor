@@ -17,3 +17,10 @@ Autostart
 
 If you want to enable autostart, open the .service file and change
 ```/PATH/TO/SCRIPTDIRECTORY``` to your actual working directory 
+
+Add the .service file to your boot routine
+```bash
+sudo cp oledMonitor.service /lib/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable oledMonitor.service
+```
