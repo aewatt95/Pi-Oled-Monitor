@@ -14,14 +14,14 @@ from PIL import ImageFont
 
 interface = "wlan0"
 
+#Change to spi(...) instead of i2c(...) if your SSD1306 is controlled by SPI
 serial = i2c(port=1, address=0x3c)
 device = ssd1306(serial)
 
 runAllowed = True
 
-font_path = "/home/andre/python/"
+font_path = ""
 icon = ImageFont.truetype(font_path + "MaterialIcons-Regular.ttf", 15)
-font = ImageFont.truetype(font_path + "FiveByFive.ttf",8)
 
 def endReceive(a, b):
 	global runAllowed
@@ -30,23 +30,6 @@ def endReceive(a, b):
 signal.signal(signal.SIGINT, endReceive)
 signal.signal(signal.SIGTERM, endReceive)
 
-
-def humanize(bytes, precision=3):
-
-    abbrevs = (
-        (1<<50L, 'Pb'),
-        (1<<40L, 'Tb'),
-        (1<<30L, 'Gb'),
-        (1<<20L, 'Mb'),
-        (1<<10L, 'kb'),
-        )
-    if bytes == 1:
-        return '1 byte'
-    for factor, suffix in abbrevs:
-        if bytes >= factor:
-            break
-    return '%.*f%s' % (precision, float(bytes) / factor, suffix)
-
 tmpUpMax = 1.0
 tmpDownMax = 1.0
 
@@ -54,9 +37,7 @@ netBufUp = deque(maxlen=10)
 netBufDown = deque(maxlen=10)
 
 while runAllowed:
-	#for dbm...
-	#cmd = "iw dev wlan0 link | grep signal | awk '{print $2}'"
-	#cmd = "nmcli device wifi list | grep '*' | sed -n '2,2p' | awk '{print $7}'"
+	#Get information from proc
 	cmdUp = "sudo cat /proc/net/dev | awk 'NR==0; END{print}' | awk '{print $10}'"
 	cmdDown = "sudo cat /proc/net/dev | awk 'NR==0; END{print}' | awk '{print $2}'"
 	sUp = subprocess.Popen(cmdUp, shell=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()[0][:-1]
@@ -72,7 +53,8 @@ while runAllowed:
 	netBufDown.append(int(sDown))
 
 	#Get raw Data [float]
-	rawUsage = psutil.disk_usage('/var/www/nextcloud/data/andre/files/').percent
+	#Change / to /media/YOURDEVICE if you want to monitor an external USB device
+	rawUsage = psutil.disk_usage('/').percent
 	rawNet = float(sUp)
 	rawMem = psutil.virtual_memory().percent
 	rawCpu = psutil.cpu_percent(interval=None)
@@ -108,13 +90,4 @@ while runAllowed:
 		draw.rectangle([20,34,20+((formNetUp/tmpUpMax)*44),44], fill="white", width=1)
 		draw.rectangle([70,34,70+((formNetDown/tmpDownMax)*48),44], fill="white", width=1)
 		draw.rectangle([20,50,20+(formUsage*98),60],fill="white", width=1)
-
-		# draw.rectangle([20,2,20+(formMem*98),12], fill="white", width=1)
-		# draw.rectangle([20,18,20+(formUsage*98),28], fill="white", width=1)
-		# draw.rectangle([20,34,20+((formNetUp/tmpUpMax)*44),44], fill="white", width=1)
-		# draw.rectangle([70,34,70+((formNetDown/tmpDownMax)*48),44], fill="white", width=1)
-		# draw.rectangle([20,50,20+(formCpu*98),60],fill="white", width=1)
-
-		#draw.text((20,0),text=str(formUsage) + "%" , font=font, fill=usageColor)
-
 	time.sleep(0.1)
