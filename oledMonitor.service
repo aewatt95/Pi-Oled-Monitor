@@ -1,0 +1,18 @@
+[Unit]
+Description=OLED Monitor Service
+After=syslog.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/PATH/TO/SCRIPTDIRECTORY
+ExecStart=/PATH/TO/SCRIPTDIRECTORY/watchOLED_change.py
+SyslogIdentifier=oledMonitor
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
