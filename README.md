@@ -8,8 +8,12 @@ This script is used to show system resource informations on an SSD1306 OLED disp
 + Luma oled library 
 + Pillow
 
-## Installation 
 ```bash
 sudo apt install python python-pip
 sudo pip install pillow luma.core luma.oled psutil
 ```
+
+Autostart
+
+If you want to enable autostart, open the .service file and change
+```/PATH/TO/SCRIPTDIRECTORY``` to your actual working directory 
